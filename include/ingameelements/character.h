@@ -69,6 +69,8 @@ class Character : public MovingEntity
         bool hasJumped = false;
         bool xblocked;
         bool yblocked;
+        int doublejumptimer;
+        int wallclingtimer;
         double friction;
         double acceleration;
 
