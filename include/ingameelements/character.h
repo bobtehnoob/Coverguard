@@ -64,6 +64,9 @@ class Character : public MovingEntity
 
         Health hp;
 
+
+        bool canJump = false;
+        bool hasJumped = false;
         bool xblocked;
         bool yblocked;
         double friction;

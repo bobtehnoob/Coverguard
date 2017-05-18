@@ -53,6 +53,7 @@ void Character::beginstep(Gamestate &state, double frametime)
 {
     Player &ownerplayer = state.get<Player>(owner);
 
+
     if (cangetinput(state))
     {
         if (heldkeys.LEFT)
@@ -64,9 +65,31 @@ void Character::beginstep(Gamestate &state, double frametime)
             hspeed = std::min(hspeed + acceleration * runpower() * frametime, maxhspeed(state));
         }
 
+        canJump = false;
+        hasJumped = false;
+        if (onground(state)){
+            canJump = true;
+        }
+    // Gravity (lucio wallride shenanigans)
+
+        if (ownerplayer.heroclass == MCCREE){
+            if (vspeed >= 0 and xblocked and (heldkeys.RIGHT or heldkeys.LEFT)){
+                vspeed = 0;
+                canJump = true;
+            }
+            else if (vspeed >= 0 and heldkeys.JUMP and (heldkeys.RIGHT or heldkeys.LEFT)){
+                vspeed = 0;
+            }
+            else {
+                    vspeed += 540.0*frametime;
+            }
+        }
+        else {
+            vspeed += 540.0*frametime;
+        }
         if (heldkeys.JUMP)
         {
-            if (onground(state))
+            if (canJump)
             {
                 vspeed = -250.0;
             }
@@ -124,8 +147,7 @@ void Character::beginstep(Gamestate &state, double frametime)
         }
     }
 
-    // Gravity
-    vspeed += 540.0*frametime;
+
 
     // apply friction
     hspeed *= std::pow(friction, frametime);
